@@ -1,16 +1,38 @@
-const { Pool } = require('pg');
+const mongoose = require('mongoose');
 
-const PG_URI = 'postgres://fdgfwiww:Ct3mX77e8uVWx-u8cp-kND9dv3iS6svM@mahmud.db.elephantsql.com/fdgfwiww';
+const MONGO_URI = 'mongodb+srv://garybalogh93:JnYYnDdiOA9FyzJo@cluster0.3u25ma1.mongodb.net/?retryWrites=true&w=majority';
 
-// create a new pool here using the connection string above
-const pool = new Pool({
-  connectionString: PG_URI
+mongoose.connect(MONGO_URI, {
+  // options for the connect method to parse the URI
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  // sets the name of the DB that our collections are part of
+  dbName: 'financeData'
+})
+  .then(() => console.log('Connected to Mongo DB.'))
+  .catch(err => console.log(err));
+
+const Schema = mongoose.Schema;
+
+// sets a schema for the 'users' collection
+const userSchema = new Schema({
+  username: { type: String, required: true },
+  password: { type: String, required: true },
+  monthlyData: {
+    jan2023: {income: [
+                { 
+                  description: '',
+                  amount: ''
+                }
+              ],
+              expenses: [
+                {
+                  description: '',
+                  amount: ''
+                }
+              ]
+            }
+  }
 });
 
-
-module.exports = {
-  query: (text, params, callback) => {
-    console.log('executed query', text);
-    return pool.query(text, params, callback);
-  }
-};
+const User = mongoose.model('user', userSchema);
