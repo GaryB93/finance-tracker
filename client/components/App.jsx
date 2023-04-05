@@ -5,11 +5,13 @@ import Login from './Login';
 import Home from './Home';
 import History from './History';
 import Income from './Income';
+import Expenses from './Expenses';
 
 class App extends Component {
   render() {
     return (
-      <div>
+      <div id="main-container">
+        <h1>Opticash</h1>
         <Routes>
           <Route path="/" element={<Login />}/>
   
@@ -18,6 +20,8 @@ class App extends Component {
           <Route path="/history" element={<History />}/>
           
           <Route path="/income" element={<Income />}/>
+
+          <Route path="/expenses" element={<Expenses />}/>
         </Routes>
       </div>
     )

@@ -1,19 +1,29 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
-export default function History() {
-  fetch('/api/history')
-    .then(res => res.json())
-    .then(data => {
-      console.log(data);
-    });
+class History extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      months: [],
+    }
+  }
 
-  return (
-    <div>
-      <h1>Finance History</h1>
-      <Link to={'/home'}>
-        <button type="button">Home</button>
-      </Link>
-    </div>
-  )
+  componentDidMount() {
+    
+  }
+
+  render() {
+    return (
+      <>
+        <div className="main-display">
+        </div>
+        <Link to={'/home'}>
+          <button type="button" className="primary-btn">Home</button>
+        </Link>
+      </>
+    )
+  }
 }
+
+export default History;

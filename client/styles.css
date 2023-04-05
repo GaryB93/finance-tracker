@@ -1,14 +1,72 @@
-body {
-  background-color: rgb(40, 40, 40);
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  color: rgb(88, 88, 88);
 }
 
-main {
-  max-width: 500px;
-  margin: 0 auto;
-  background-color: rgb(77, 77, 255);
+body {
+  background-color: #D3E6C7;
+}
+
+#root {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+#main-container {
+  min-height: 400px;
+  width: 500px;
+  border-radius: 10px;
+  padding: 20px;
+  background-color: #F4F9F1;
+  box-shadow: 1px 1px 10px #243E36, -1px -1px 10px #243E36;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.main-display {
+  height: 300px;
+  overflow: auto;
+}
+
+.info-with-btn {
+  margin-bottom: 5px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
 }
 
 .finance-display {
   display: flex;
+  width: 50%;
   justify-content: space-between;
+}
+
+.add-fields {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+button {
+  width: 100px;
+  height: 20px;
+  border-radius: 5px;
+}
+
+.primary-btn {
+  background-color:#243E36;
+  color: #D3E6C7;
+}
+
+.secondary-btn {
+  background-color:#D3E6C7;
+  color:#243E36;
 }

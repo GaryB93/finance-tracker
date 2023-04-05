@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 import Info from './Info';
 
-class Income extends Component {
+class Expenses extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -19,7 +19,7 @@ class Income extends Component {
 
   // FETCH DATABASE ITEMS
   handleStateChange() {
-    fetch('/api/income')
+    fetch('/api/expenses')
       .then(data => data.json())
       .then(data => { this.setState({ items: data})});
   }
@@ -44,7 +44,7 @@ class Income extends Component {
         body: JSON.stringify({
           item: this.state['item-description'],
           amount: this.state['item-value'],
-          type: 'income'
+          type: 'expense'
         })
       }
     );
@@ -65,10 +65,10 @@ class Income extends Component {
   }
 
   render() {
-    const incomeItems = [];
+    const expenseItems = [];
     // iterate over array of items
     for (const item of this.state.items) {
-      incomeItems.push(
+      expenseItems.push(
         <div className="info-with-btn" key={item.item_id}>
           <Info name={item.description} value={item.amount}/>
           <button type="button" onClick={() => this.handleDelete(item.item_id)}>Delete</button>
@@ -79,7 +79,7 @@ class Income extends Component {
     return (
       <>
         <div className="main-display">
-          {incomeItems}
+          {expenseItems}
         </div>
         <div className="add-fields">
           <input name="item-description" type="text" placeholder="Description" onChange={this.handleInputChange}/>
@@ -94,4 +94,4 @@ class Income extends Component {
   }
 }
 
-export default Income;
+export default Expenses;

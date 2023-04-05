@@ -31,33 +31,35 @@ class Home extends Component {
     fetch('/api/')
       .then(data => data.json())
       .then(data => {
-        console.log(data);
         this.handleStateChange(data);
       });
   }
 
   render(){
     return (
-      <div>
-        <div className="grid">
-          <h1>Monthly Expenses</h1>
-          <Info name="Income" value={this.state.income}/>
-          <Link to={'/income'}>
-            <button type="button">Edit</button>
-          </Link>
-            
-          <Info name="Expenses" value={this.state.expenses}/>
-          <Link to={'/expenses'}>
-            <button type="button">Edit</button>
-          </Link>
-            
+      <>
+        <div className="main-display">
+          <div className="info-with-btn">
+            <Info name="Income" value={this.state.income}/>
+            <Link to={'/income'}>
+              <button type="button" className="secondary-btn">Edit</button>
+            </Link>
+          </div>
+          
+          <div className="info-with-btn">
+            <Info name="Expenses" value={this.state.expenses}/>
+            <Link to={'/expenses'}>
+              <button type="button" className="secondary-btn">Edit</button>
+            </Link>
+          </div>
+
           <Info name="Total" value={this.state.income - this.state.expenses}/>
         </div>
 
         <Link to={'/history'}>
-          <button type="button">History</button>
+          <button type="button" className="primary-btn">History</button>
         </Link>
-      </div>
+      </>
     )
   }
 }

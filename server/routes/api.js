@@ -19,13 +19,18 @@ router.get('/income',
   (req, res) => res.status(200).json(res.locals.message)
 );
 
-router.get('/expense',
+router.get('/expenses',
   financeController.getExpenses,
   (req, res) => res.status(200).json(res.locals.message)
 );
 
-router.post('/income',
+router.post('/items',
   financeController.addItem,
+  (req, res) => res.status(200).json(res.locals.message)
+);
+
+router.post('/delete/:id',
+  financeController.deleteItem,
   (req, res) => res.status(200).json(res.locals.message)
 );
 
