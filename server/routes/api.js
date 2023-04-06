@@ -4,7 +4,7 @@ const financeController = require('../controllers/financeController');
 
 const router = express.Router();
 
-router.get('/',
+router.get('/month/:date',
   financeController.getMonth,
   (req, res) => res.status(200).json(res.locals.message)
 );
@@ -14,12 +14,12 @@ router.get('/history',
   (req, res) => res.status(200).json(res.locals.message)
 );
 
-router.get('/income',
+router.get('/income/:date',
   financeController.getIncome,
   (req, res) => res.status(200).json(res.locals.message)
 );
 
-router.get('/expenses',
+router.get('/expenses/:date',
   financeController.getExpenses,
   (req, res) => res.status(200).json(res.locals.message)
 );

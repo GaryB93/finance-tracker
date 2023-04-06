@@ -8,83 +8,121 @@ class Income extends Component {
     super(props);
     this.state = {
       items: [],
-      'item-description': '',
-      'item-value': '',
+      itemDescription: '',
+      itemValue: '',
+      itemDate: '',
+      currDate: '',
+      dateDisplay: '',
     }
-    this.handleStateChange = this.handleStateChange.bind(this);
-    this.handleInputChange = this.handleInputChange.bind(this);
-    this.handleAdd = this.handleAdd.bind(this);
-    this.handleDelete = this.handleDelete.bind(this);
+    this.handleDataFetch = this.handleDataFetch.bind(this);
+    this.handleItemInput = this.handleItemInput.bind(this);
+    this.handleDateInput = this.handleDateInput.bind(this);
+    this.handleAddItem = this.handleAddItem.bind(this);
+    this.handleDeleteItem = this.handleDeleteItem.bind(this);
   }
 
   // FETCH DATABASE ITEMS
-  handleStateChange() {
-    fetch('/api/income')
+  async handleDataFetch(dateStr, dateDisplay) {
+    const url = `/api/income/${dateStr}`;
+    await fetch(url)
       .then(data => data.json())
-      .then(data => { this.setState({ items: data})});
+      .then(data => {
+        this.setState({ 
+          items: data,
+          currDate: dateStr,
+          dateDisplay: dateDisplay,
+        })});
   }
 
   // UPDATE STATE WHILE USER ENTERS INPUT
-  handleInputChange({ target }) {
+  handleItemInput({ target }) {
     this.setState({ [target.name]: target.value});
   }
 
+  // UPDATE STATE AFTER USER PICKS A DATE FOR ITEM TO BE ADDED
+  handleDateInput({ target }) {
+    const date = target.value.slice(0,7);
+    this.setState({ itemDate: date });
+  }
+
   // HANDLE CLICK TO POST NEW ITEM TO DATABASE
-  handleAdd() {
+  async handleAddItem() {
     // IF EITHER INPUT IS EMPTY DO NOTHING
-    if (!this.state['item-description'] || !this.state['item-value']) return;
+    if (!this.state.itemDescription || !this.state.itemValue || !this.state.itemDate) return;
 
     // MAKE POST REQUEST TO ADD TO DATABASE
-    fetch('/api/items',
+    await fetch('/api/items',
       {
         method: 'POST',
         headers: {
           'Content-Type': 'Application/JSON'
         },
         body: JSON.stringify({
-          item: this.state['item-description'],
-          amount: this.state['item-value'],
+          item: this.state.itemDescription,
+          amount: this.state.itemValue,
+          date: this.state.itemDate,
           type: 'income'
         })
       }
     );
 
-    this.handleStateChange();
+    this.handleDataFetch(this.state.currDate, this.state.dateDisplay);
   }
 
-  handleDelete(item_id) {
+  // HANDLE CLICK TO DELETE ITEM FROM DATABASE
+  async handleDeleteItem(item_id) {
     const url = `/api/delete/${item_id}`
     // MAKE DELETE REQUEST TO DATABASE
-    fetch(url, { method: 'POST' });
-    this.handleStateChange();
+    await fetch(url, { method: 'POST' });
+    this.handleDataFetch(this.state.currDate, this.state.dateDisplay);
   }
 
   // FETCH DATA AFTER COMPONENT RENDERS
   componentDidMount() {
-    this.handleStateChange();
+    const date = new Date();
+    // GET CURRENT MONTH
+    const months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+      'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
+    let monthNum = date.getMonth();
+    const month = months[monthNum];
+    monthNum++;
+    monthNum < 10 ? monthNum = '0' + monthNum.toString() : monthNum = monthNum.toString();
+    // GET CURRENT YEAR
+    let year = date.getFullYear().toString();
+    // CREATE STRING FROM DATE
+    const dateStr = year.concat('-', monthNum);
+    const dateDisplay = month.concat(' ', year);
+    // CREATE DATE DISPLAY FOR CURRENT MONTH AND YEAR
+
+    this.handleDataFetch(dateStr, dateDisplay);
   }
 
+  // RENDER COMPONENTS
   render() {
     const incomeItems = [];
     // iterate over array of items
     for (const item of this.state.items) {
       incomeItems.push(
-        <div className="info-with-btn" key={item.item_id}>
+        <div className="info-with-btn" key={item.id}>
           <Info name={item.description} value={item.amount}/>
-          <button type="button" onClick={() => this.handleDelete(item.item_id)}>Delete</button>
+          <button type="button" className="secondary-btn" onClick={() => this.handleDeleteItem(item.id)}>Delete</button>
         </div>
       );
     }
 
     return (
       <>
+        <h2>{this.state.dateDisplay}</h2>
+        <h3>(Income)</h3>
         <div className="main-display">
           {incomeItems}
         </div>
         <div className="add-fields">
-          <input name="item-description" type="text" placeholder="Description" onChange={this.handleInputChange}/>
-          <input name="item-value" type="text" placeholder="$0.00" onChange={this.handleInputChange}/>
-          <button type="button" className="secondary-btn" onClick={this.handleAdd}>Add</button>
+          <input name="itemDescription" type="text" placeholder="Description" onChange={this.handleItemInput}/>
+          <input name="itemValue" type="text" placeholder="$0.00" onChange={this.handleItemInput}/>
+          <input name="itemDate" type="date" onChange={this.handleDateInput}/>
+          <button type="button" className="secondary-btn" onClick={this.handleAddItem}>Add</button>
         </div>
         <Link to={'/home'}>
           <button type="button" className="primary-btn">Home</button>

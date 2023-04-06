@@ -1,11 +1,11 @@
-const { findCacheDir } = require('webpack-dev-server');
+// const { findCacheDir } = require('webpack-dev-server');
 const db = require('../models/financeModels');
 
 const financeController = {};
 
 // GET INCOME AND EXPENSES FOR CURRENT MONTH TO DISPLAY ON HOME PAGE
 financeController.getMonth = (req, res, next) => {
-  const queryString = `SELECT * FROM items`;
+  const queryString = `SELECT * FROM items WHERE itemdate = '` + req.params.date + `'`;
 
   db.query(queryString)
     .then(data => {
@@ -13,7 +13,12 @@ financeController.getMonth = (req, res, next) => {
       return next();
     })
     .catch(err => {
-      return next(err);
+      const errorObj = {
+        log: 'financeController.getMonth middleware error',
+        status: 501,
+        message: 'Unable to get month'
+      }
+      return next(errorObj);
     })
 }
 
@@ -27,16 +32,22 @@ financeController.getHistory = (req, res, next) => {
       return next();
     })
     .catch(err => {
-      return next(err);
+      const errorObj = {
+        log: 'financeController.getHistory middleware error',
+        status: 501,
+        message: 'Unable to get history'
+      }
+      return next(errorObj);
     })
 }
 
 // GET INCOME ITEMS FOR CURRENT MONTH
 financeController.getIncome = (req, res, next) => {
+  
   const queryString = `
-  SELECT description, amount, item_id 
+  SELECT description, amount, id 
   FROM items 
-  WHERE type = 'income'
+  WHERE (type = 'income') AND (itemdate LIKE '2023-04%')
   `;
 
   db.query(queryString)
@@ -45,36 +56,48 @@ financeController.getIncome = (req, res, next) => {
       return next();
     })
     .catch(err => {
-      return next(err);
+      const errorObj = {
+        log: 'financeController.getIncome middleware error',
+        status: 501,
+        message: 'Unable to get income'
+      }
+      return next(errorObj);
     })
 }
 
 // GET EXPENSE ITEMS FOR CURRENT MONTH
 financeController.getExpenses = (req, res, next) => {
+  const values = req.params.date;
+
   const queryString = `
-  SELECT description, amount, item_id 
+  SELECT description, amount, id 
   FROM items 
-  WHERE type = 'expense'
+  WHERE type = 'expense' AND itemdate = $1
   `;
 
-  db.query(queryString)
+  db.query(queryString, [values])
     .then(data => {
       res.locals.message = data.rows;
       return next();
     })
     .catch(err => {
-      return next(err);
+      const errorObj = {
+        log: 'financeController.getIncome middleware error',
+        status: 501,
+        message: 'Unable to get income'
+      }
+      return next(errorObj);
     })
 }
 
 // ADDS INCOME OR EXPENSE ITEM TO DATABASE
 financeController.addItem = (req, res, next) => {
-  const { item, amount, type } = req.body;
-  const values = [item, amount, type];
+  const { item, amount, date, type } = req.body;
+  const values = [item, amount, date, type];
 
   const queryString = `
-  INSERT INTO items (description, amount, type, user_id)
-  VALUES ($1, $2, $3, 1)`;
+  INSERT INTO items (description, amount, itemdate, type, user_id)
+  VALUES ($1, $2, $3, $4, 1)`;
 
   db.query(queryString, values)
     .then(data => {
@@ -82,7 +105,12 @@ financeController.addItem = (req, res, next) => {
       return next();
     })
     .catch(err => {
-      return next(err);
+      const errorObj = {
+        log: 'financeController.addItem middleware error',
+        status: 501,
+        message: 'Unable to add item'
+      }
+      return next(errorObj);
     })
 }
 
@@ -91,7 +119,7 @@ financeController.deleteItem = (req, res, next) => {
 
   const queryString = `
   DELETE FROM items
-  WHERE item_id = $1`;
+  WHERE id = $1`;
 
   db.query(queryString, [req.params.id])
     .then(data => {
@@ -99,7 +127,12 @@ financeController.deleteItem = (req, res, next) => {
       return next();
     })
     .catch(err => {
-      return next(err);
+      const errorObj = {
+        log: 'financeController.deleteItem middleware error',
+        status: 501,
+        message: 'Unable to delete item'
+      }
+      return next(errorObj);
     })
 }
 

@@ -9,11 +9,12 @@ class Home extends Component {
     this.state = {
       income: '',
       expenses: '',
+      dateDisplay: '',
     };
     this.handleStateChange = this.handleStateChange.bind(this);
   }
 
-  handleStateChange(arrOfItems) {
+  handleStateChange(arrOfItems, dateDisplay) {
     let newIncome = 0;
     let newExpenses = 0;
     // iterate through array of items
@@ -23,21 +24,41 @@ class Home extends Component {
 
     this.setState({
       income: newIncome,
-      expenses: newExpenses
+      expenses: newExpenses,
+      dateDisplay: dateDisplay,
     });
   }
 
   componentDidMount() {
-    fetch('/api/')
+    const date = new Date();
+    // GET CURRENT MONTH
+    const months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+      'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
+    let monthNum = date.getMonth();
+    const month = months[monthNum];
+    monthNum++;
+    monthNum < 10 ? monthNum = '0' + monthNum.toString() : monthNum = monthNum.toString();
+    // GET CURRENT YEAR
+    let year = date.getFullYear().toString();
+    // CREATE STRING FROM DATE
+    const dateStr = year.concat('-', monthNum);
+    const dateDisplay = month.concat(' ', year);
+    
+    const url = `/api/month/${dateStr}`;
+    console.log(url);
+    fetch(url)
       .then(data => data.json())
       .then(data => {
-        this.handleStateChange(data);
+        this.handleStateChange(data, dateDisplay);
       });
   }
 
   render(){
     return (
       <>
+        <h2>{this.state.dateDisplay}</h2>
+        <h3>Summary</h3>
         <div className="main-display">
           <div className="info-with-btn">
             <Info name="Income" value={this.state.income}/>

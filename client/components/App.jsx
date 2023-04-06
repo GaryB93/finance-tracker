@@ -11,7 +11,7 @@ class App extends Component {
   render() {
     return (
       <div id="main-container">
-        <h1>Opticash</h1>
+        <h1>CashView</h1>
         <Routes>
           <Route path="/" element={<Login />}/>
   
